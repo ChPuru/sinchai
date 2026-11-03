@@ -1,0 +1,20 @@
+# The folder around this project also holds lab write-ups (.docx / .pdf), zip archives and design exports that are not
+# part of the code, so everything at the repository root is ignored unless it is listed here.
+/*
+!/.gitignore
+!/README.md
+!/render.yaml
+!/docs/
+!/sinchai-server/
+!/sinchai-client/
+
+# secrets and generated files, anywhere in the tree
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+*.log
+.remember/
+.claude/
+.DS_Store
