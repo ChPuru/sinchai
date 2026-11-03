@@ -31,7 +31,8 @@ var server = http.createServer(app);
 // Exp 5 - connect to MongoDB first; the server only starts listening once the database is reachable
 db.connect()
   .then(function () {
-    console.log('MongoDB connected: ' + config.mongoUri);
+    // an Atlas connection string carries the database password, so log only where it points (no user, password or options)
+    console.log('MongoDB connected: ' + config.mongoUri.replace(/\/\/[^/@]*@/, '//').replace(/\?.*$/, ''));
     server.listen(port);
     daily.start();
   })
