@@ -59,7 +59,16 @@ export function AppProvider({ children }) {
   const login = useCallback(({ token, user: account }) => {
     // the language saved on the account follows the person to a new device, unless they just chose one here
     if (!pickedLang.current && account.language) setLangState(account.language);
-    setSession({ token, user: account });
+    const next = { token, user: account };
+    // Save the session BEFORE the state changes. The data store mounts in the same commit, and a child's effect runs
+    // before the persisting effect above, so its first requests (plots, weather, history, analytics) would go out
+    // without the token, get 401 and never be retried. Dev mode hides this (StrictMode runs the effect twice).
+    try {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(next));
+    } catch {
+      /* storage unavailable: the effect above has the same limit */
+    }
+    setSession(next);
   }, []);
   const logout = useCallback(() => setSession(null), []);
 
