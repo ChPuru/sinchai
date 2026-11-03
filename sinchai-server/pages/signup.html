@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SinchAI - Farmer Sign Up</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <header>
+    <h1><img src="/images/logo.png" alt="">SinchAI Smart Irrigation</h1>
+    <nav><a href="/">Sign Up</a><a href="/login">Login</a><a href="/about.html">About</a><a href="/gallery.html">Gallery</a><a href="/supervisors.html">Supervisors</a></nav>
+  </header>
+  <img class="banner" src="/images/banner.jpg" alt="Drip irrigation running through a sugarcane field">
+  <div class="card">
+    <h2>Create your farmer account</h2>
+    <form action="/signup" method="POST">
+      <label for="name">Full Name</label>
+      <input id="name" name="name" type="text" placeholder="Ramesh Patil" pattern="[A-Za-z ]{3,}" title="At least 3 letters, alphabets only" required>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" placeholder="you@example.com" required>
+      <label for="mobile">Mobile number</label>
+      <input id="mobile" name="mobile" type="tel" placeholder="9876543210" pattern="[6-9][0-9]{9}" title="10 digits starting with 6-9" required>
+      <label for="village">Village</label>
+      <input id="village" name="village" type="text" placeholder="Karad" required>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" minlength="8" title="At least 8 characters, one capital letter and one digit" required>
+      <button type="submit">Sign Up</button>
+    </form>
+    <p class="small">Already have an account? <a href="/login">Login</a> &middot; Field supervisors register in the SinchAI app.</p>
+  </div>
+</body>
+</html>

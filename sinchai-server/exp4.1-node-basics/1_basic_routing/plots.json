@@ -1,0 +1,5 @@
+[
+  { "plotId": 101, "name": "North field", "village": "Karad",  "soilType": "clay",  "cropStage": "grand-growth", "areaAcres": 2.5, "pumpLph": 90000 },
+  { "plotId": 102, "name": "River side",  "village": "Karad",  "soilType": "loamy", "cropStage": "tillering",    "areaAcres": 1.5, "pumpLph": 60000 },
+  { "plotId": 103, "name": "Well plot",   "village": "Satara", "soilType": "sandy", "cropStage": "maturity",     "areaAcres": 3,   "pumpLph": 100000 }
+]

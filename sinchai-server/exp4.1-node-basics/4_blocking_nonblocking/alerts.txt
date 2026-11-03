@@ -1,0 +1,2 @@
+NOTICE: The supervisor alert list is reviewed every morning.
+NOTICE: An alert is a heat-stress plot or a plot that needs more than 3 hours of pumping.

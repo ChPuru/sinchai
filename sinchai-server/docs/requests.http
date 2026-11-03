@@ -1,0 +1,131 @@
+# VS Code "REST Client" extension (humao.rest-client): click "Send Request" above any request.
+# Start the API first (npm start). Nothing is pre-loaded: register an account below, then everything else reuses its token.
+# The weather requests need live internet (Open-Meteo); without it they answer 503 - the API never invents weather.
+
+@baseUrl = http://localhost:3000
+# change these two if you run the file twice (a mobile number and an email can only be registered once)
+@mobile = 9123400001
+@email = rest.client@example.com
+@password = RestClient@1
+
+### ---- Auth ----------------------------------------------------------------------------------------------
+# @name register
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{ "name": "Rest Client", "email": "{{email}}", "mobile": "{{mobile}}", "village": "Karad", "password": "{{password}}" }
+
+###
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "mobile": "{{mobile}}", "password": "{{password}}" }
+
+###
+@token = {{login.response.body.token}}
+
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### ---- Plots: CRUD (Exp 5). lat/lng is where the pin was placed on the map -------------------------------------
+# CREATE -> 201
+# @name createPlot
+POST {{baseUrl}}/api/plots
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "REST client plot", "village": "Karad", "soilType": "loamy", "cropStage": "tillering",
+  "areaAcres": 1.5, "pumpLph": 60000, "habitHours": 2.5, "pumpKw": 3.7, "lat": 17.2862, "lng": 74.1881, "depletion": 12 }
+
+###
+@plotId = {{createPlot.response.body.id}}
+
+# READ all -> 200
+GET {{baseUrl}}/api/plots
+Authorization: Bearer {{token}}
+
+###
+# READ all, filtered by the query string -> 200
+GET {{baseUrl}}/api/plots?village=karad&soilType=loamy
+Authorization: Bearer {{token}}
+
+###
+# READ one (route parameter) -> 200
+GET {{baseUrl}}/api/plots/{{plotId}}
+Authorization: Bearer {{token}}
+
+###
+# UPDATE (partial) -> 200
+PUT {{baseUrl}}/api/plots/{{plotId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "cropStage": "grand-growth" }
+
+###
+# error cases: 400 invalid data, 400 bad id, 404 unknown id, 409 duplicate name
+PUT {{baseUrl}}/api/plots/{{plotId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "pumpLph": 5 }
+
+###
+GET {{baseUrl}}/api/plots/not-an-id
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/api/plots/64b64b64b64b64b64b64b64b
+Authorization: Bearer {{token}}
+
+###
+# a pin in London -> 400 "The plot must be located in India"
+POST {{baseUrl}}/api/plots
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Abroad", "village": "Karad", "soilType": "clay", "cropStage": "maturity",
+  "areaAcres": 1, "pumpLph": 60000, "lat": 51.5, "lng": -0.12 }
+
+### ---- The science: live weather, advisory, irrigation, analytics ----------------------------------------------
+GET {{baseUrl}}/api/weather/point?lat=17.2862&lng=74.1881
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/api/weather
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/api/plots/{{plotId}}/advisory
+Authorization: Bearer {{token}}
+
+###
+# @name logIrrigation
+POST {{baseUrl}}/api/history
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "plotId": "{{plotId}}", "hours": 2, "advised": true }
+
+###
+@logId = {{logIrrigation.response.body.log.id}}
+
+GET {{baseUrl}}/api/history?plot={{plotId}}
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/api/analytics/summary
+Authorization: Bearer {{token}}
+
+###
+DELETE {{baseUrl}}/api/history/{{logId}}
+Authorization: Bearer {{token}}
+
+### ---- Clean up: DELETE -> 200 ------------------------------------------------------------------------------
+DELETE {{baseUrl}}/api/plots/{{plotId}}
+Authorization: Bearer {{token}}
+
+### ---- Role check: a farmer asking for the supervisor's alerts -> 403 -----------------------------------------
+GET {{baseUrl}}/api/alerts
+Authorization: Bearer {{token}}

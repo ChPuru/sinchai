@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><title>Plot Registration</title></head>
+<body>
+  <h1>Plot Registration Form</h1>
+  <form>
+    Plot name: <input type="text" name="name"><br><br>
+    Village: <input type="text" name="village"><br><br>
+    Soil type:
+    <select name="soilType">
+      <option>sandy</option>
+      <option>loamy</option>
+      <option>clay</option>
+    </select><br><br>
+    Crop stage:
+    <select name="cropStage">
+      <option>germination</option>
+      <option>tillering</option>
+      <option>grand-growth</option>
+      <option>maturity</option>
+    </select><br><br>
+    Area (acres): <input type="number" name="areaAcres" step="0.1"><br><br>
+    Pump (L/hr): <input type="number" name="pumpLph" step="1000"><br><br>
+    <input type="submit" value="Register Plot">
+  </form>
+  <p><a href="/">Home</a> | <a href="/plots">Plots (JSON)</a></p>
+</body>
+</html>

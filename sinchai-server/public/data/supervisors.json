@@ -1,0 +1,10 @@
+{
+  "organisation": "SinchAI Field Network",
+  "supervisors": [
+    { "id": 101, "name": "Anil Deshmukh",   "role": "Cluster Supervisor",  "department": "Field Operations", "city": "Karad" },
+    { "id": 102, "name": "Priya Nair",      "role": "Agronomy Lead",       "department": "Agronomy",         "city": "Pune" },
+    { "id": 103, "name": "Rohan Desai",     "role": "Field Supervisor",    "department": "Field Operations", "city": "Satara" },
+    { "id": 104, "name": "Sneha Kulkarni",  "role": "Farmer Support",      "department": "Support",          "city": "Kolhapur" },
+    { "id": 105, "name": "Vikram Joshi",    "role": "Backend Developer",   "department": "Technology",       "city": "Sangli" }
+  ]
+}

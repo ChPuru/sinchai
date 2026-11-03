@@ -1,0 +1,4 @@
+Date,Plot,Hours
+2026-10-20,North field,3
+2026-10-22,River side,1.5
+2026-10-24,Well plot,2.5
