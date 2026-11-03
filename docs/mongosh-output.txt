@@ -1,0 +1,44 @@
+PS C:\Users\Lenovo\Desktop\MERNLAB> mongosh mongodb://127.0.0.1:27017/sinchai --quiet --eval "db.getCollectionNames().sort().forEach(n => print(n.padEnd(14) + String(db.getCollection(n).countDocuments()).padStart(5) + ' documents'))"
+advisories        3 documents
+irrigationlogs    1 documents
+plots             3 documents
+users             2 documents
+weatherdays      39 documents
+
+PS C:\Users\Lenovo\Desktop\MERNLAB> mongosh mongodb://127.0.0.1:27017/sinchai --quiet --eval "db.plots.findOne({ name: 'Mill Road Plot' })"
+{
+  _id: ObjectId('6aea262edaa07ba52f273fa9'),
+  owner: ObjectId('6aea25e9daa07ba52f273fa7'),
+  name: 'Mill Road Plot',
+  village: 'Muzaffarnagar',
+  soilType: 'sandy',
+  cropStage: 'tillering',
+  areaAcres: 2,
+  pumpLph: 25000,
+  habitHours: 8,
+  pumpKw: 3.7,
+  depletion: 20,
+  balanceDate: '2026-11-03',
+  lat: 29.4727,
+  lng: 77.7085,
+  notes: 'Sandy strip beside the mill road.',
+  createdAt: ISODate('2026-11-03T18:21:34.824Z'),
+  updatedAt: ISODate('2026-11-03T18:21:34.824Z'),
+  __v: 0
+}
+
+PS C:\Users\Lenovo\Desktop\MERNLAB> mongosh mongodb://127.0.0.1:27017/sinchai --quiet --eval "db.advisories.findOne({ plot: db.plots.findOne({ name: 'Mill Road Plot' })._id }, { _id: 0 })"
+{
+  plot: ObjectId('6aea262edaa07ba52f273fa9'),
+  date: '2026-11-03',
+  __v: 0,
+  createdAt: ISODate('2026-11-03T18:28:00.828Z'),
+  depletion: 22.4,
+  etc: 2.4,
+  hours: 7.3,
+  owner: ObjectId('6aea25e9daa07ba52f273fa7'),
+  taw: 36,
+  type: 'irrigate',
+  updatedAt: ISODate('2026-11-03T18:28:50.310Z')
+}
+

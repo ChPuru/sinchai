@@ -1,0 +1,117 @@
+===== node --test --test-concurrency=1 test/auth.test.js =====
+✔ register rejects bad data with 400 and a message per field (784.1804ms)
+✔ register: password needs a capital letter and a digit (6.6118ms)
+✔ register creates a farmer (201), never returns the password hash, and signs a token (26.321ms)
+✔ duplicate email and duplicate mobile give 409 with the offending field (12.4492ms)
+✔ a client cannot make itself a supervisor without the access code (10.3321ms)
+✔ unknown role value is rejected (2.6507ms)
+✔ login: right password 200, wrong password and unknown mobile both 401 with the same message (19.4875ms)
+✔ login ignores NoSQL operator injection ({"$ne": null}) with a 400 (1.9125ms)
+✔ malformed JSON is a 400, not a crash (2.3589ms)
+✔ /me needs a valid token: missing, garbage, wrong-secret, expired and deleted-user tokens are all 401 (19.1082ms)
+✔ PATCH /api/users/me saves the language; role cannot be changed this way (26.4026ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2271.9279
+exit code: 0
+
+===== node --test --test-concurrency=1 test/plots.test.js =====
+✔ CREATE 201 - the owner comes from the token, the client cannot choose it or the depletion bookkeeping (859.2349ms)
+✔ CREATE 400 with a message per invalid field; 409 for a repeated plot name (56.5396ms)
+✔ READ all is scoped: a farmer sees only their plots, a supervisor sees everybody's (48.2941ms)
+✔ READ all supports query-string filters (case-insensitive village, soilType, cropStage) (49.5853ms)
+✔ READ one / UPDATE / DELETE of somebody else's plot is 404; a supervisor may read but not change (71.7592ms)
+✔ invalid or unknown ids: 400 for a malformed id, 404 for a well-formed id that does not exist (13.906ms)
+✔ UPDATE is partial (PUT and PATCH), runs the validators, and ignores fields a client must not set (53.9116ms)
+✔ DELETE 200 removes the plot together with its irrigation log (41.6933ms)
+✔ the daily balance rolls forward: every missed day adds ETc minus rain, clamped to 0..TAW (36.4401ms)
+✔ a past day with no real reading stops the roll-forward there - it is never estimated - and blocks the advisory (39.3324ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2768.2124
+exit code: 0
+
+===== node --test --test-concurrency=1 test/irrigation.test.js =====
+✔ logging irrigation: the server works out litres, lowers the depletion, and delete / edit put it back exactly (881.2178ms)
+✔ an over-long irrigation only removes what the soil could absorb, so deleting it does not invent dryness (45.4277ms)
+✔ a back-dated entry is only a record: it does not change the depletion (28.1128ms)
+✔ irrigation log validation and ownership (107.9476ms)
+✔ history list is scoped and can be filtered by ?plot= (57.302ms)
+✔ no real weather -> 503 "unavailable"; the API never makes a number up (10.294ms)
+✔ stored real readings are served in the shape the client expects (23.1242ms)
+✔ weather/point validates its query string (14.5816ms)
+✔ GET /api/weather returns one reading per weather cell, lists a cell with no data as unavailable, and shares cells (43.0374ms)
+✔ heatwave and rain readings are recognised (36.4951ms)
+✔ an Open-Meteo reply is parsed, stored in MongoDB and cached (one network call, then the stored copy) (34.1504ms)
+✔ a day Open-Meteo has no complete data for is skipped, never filled in (20.4622ms)
+✔ if the stored weather disappears while the server runs (database wiped / restored) it is fetched again (31.1592ms)
+[weather] Open-Meteo unavailable for 16.578, 74.316 (network down) - only readings fetched earlier can be used
+✔ when Open-Meteo is down and nothing was fetched before: 503, and the dead service is not hammered (15.9572ms)
+✔ when Open-Meteo is down, readings fetched earlier are still real and still served (16.2942ms)
+✔ advisories: heatwave readings -> heat advice for a dry plot; rain readings -> skip; one stored row per plot per day (57.7175ms)
+✔ a plot with no live weather gets no advisory (listed as unavailable, single advisory is 503) - nothing is guessed (30.5953ms)
+✔ alerts: supervisors only; acknowledgement is stored and survives a re-fetch; non-alerts cannot be acknowledged (138.7507ms)
+✔ analytics: saving and energy come from the farmer's own usual hours and pump power (45.8435ms)
+✔ analytics: with no usual hours / pump power entered, no saving or energy figure is claimed (null, not an assumption) (24.6671ms)
+✔ the optional inputs are validated and can be cleared again (86.7938ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3279.9259
+exit code: 0
+
+===== node --test --test-concurrency=1 test/static.test.js =====
+✔ GET / is the Sign up page (root / homepage), not a leftover public/index.html (767.7933ms)
+✔ express.static serves every image type with the right Content-Type (65.113ms)
+✔ the supervisors JSON file is valid and lists the staff (2.2126ms)
+✔ static files send validators so browsers can answer 304 Not Modified (6.5197ms)
+✔ unknown URLs: HTML 404 page for browsers, JSON 404 under /api (7.4894ms)
+✔ POST /signup (HTML form) creates a real account and escapes what it prints (48.4319ms)
+✔ POST /signup cannot be used to create a supervisor, and bad input shows an HTML error page (12.7758ms)
+✔ POST /login (HTML form) welcomes a valid user and refuses a wrong password (9.1901ms)
+✔ security headers are present (helmet) and /api/health reports the database (1.95ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2456.7043
+exit code: 0
+
+===== node --test --test-concurrency=1 test/waterBalance.test.js =====
+✔ the demo plot on a hot dry day needs a heat-adjusted irrigation of about 3 hours (0.9702ms)
+✔ same plot, mild weather: plain irrigate instead of heat (0.1395ms)
+✔ a plot above its threshold waits, and says how many days are left (0.1234ms)
+✔ real rain tomorrow that brings the root zone back under the threshold means skip (0.1174ms)
+✔ a light drizzle does NOT cancel irrigation for a plot that is already dry (0.7782ms)
+✔ zero forecast rain is never "rain expected" (0.1762ms)
+✔ the soil model: sand holds less water than clay, so the same depletion needs irrigating sooner (0.1426ms)
+✔ litres <-> mm conversions are inverses (0.1109ms)
+✔ heatwave risk looks at today and the next three days; alerts are heat or > 3 h of pumping (0.9068ms)
+✔ server, React client and the Exp 4.1 lab module give identical advisories on a grid of inputs (6.7584ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 131.6324
+exit code: 0
+
