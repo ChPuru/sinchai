@@ -53,6 +53,10 @@ module.exports = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   // origin of the React app, allowed by CORS (in development Vite proxies /api so CORS is not even needed)
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  // Behind the host's reverse proxy (Render etc.) every request arrives from the proxy, so without this every visitor
+  // shares one rate-limit bucket and express-rate-limit reports X-Forwarded-For errors. 1 = trust exactly one proxy hop.
+  // Off in development and tests, where nothing sits in front of the server and the header must not be trusted.
+  trustProxy: isProd ? 1 : false,
   // a supervisor account can read every farmer's plots, so signing up as one needs this code
   supervisorCode,
   weather: {

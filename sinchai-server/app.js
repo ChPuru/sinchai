@@ -20,6 +20,7 @@ const analyticsRouter = require('./routes/analytics');
 const errorHandler = require('./middleware/errors');
 
 const app = express();
+if (config.trustProxy) app.set('trust proxy', config.trustProxy); // production: req.ip is the visitor, not the host's proxy
 
 // ---------- Application-level (built-in + third-party) middleware ----------
 if (!config.isTest) app.use(logger('dev')); // logs every request (Exp 4.2)
