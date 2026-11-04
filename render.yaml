@@ -4,7 +4,7 @@
 services:
   # ---- API: Express 5 + Mongoose ----------------------------------------------------------------------------------
   - type: web
-    name: sinchai-api
+    name: sinchai-irrigation-api # the name sets the address https://<name>.onrender.com; "sinchai-api" was already in use there
     runtime: node
     plan: free
     region: singapore
