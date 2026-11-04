@@ -1,0 +1,47 @@
+# Render Blueprint: the API (web service) and the React app (static site), both on the free plan.
+# Values marked "sync: false" are NOT stored here - Render asks for them in the dashboard when the Blueprint is created.
+# The database lives outside Render, on MongoDB Atlas (free M0 cluster); its connection string is MONGO_URI.
+services:
+  # ---- API: Express 5 + Mongoose ----------------------------------------------------------------------------------
+  - type: web
+    name: sinchai-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: sinchai-server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.16.0 # the version this project was built and tested on (package.json engines: >=20.12)
+      - key: MONGO_URI # Atlas connection string, with the database name (sinchai) in it
+        sync: false
+      - key: JWT_SECRET # at least 48 random bytes
+        sync: false
+      - key: SUPERVISOR_CODE # leave empty to switch supervisor sign-up off
+        sync: false
+      - key: CLIENT_ORIGIN # exact URL of the static site below, https://..., no trailing slash
+        sync: false
+      # PORT is set by Render.
+
+  # ---- React app: Vite build served as a static site ---------------------------------------------------------------
+  - type: web
+    name: sinchai-web
+    runtime: static
+    rootDir: sinchai-client
+    # vite is a devDependency, so install those too even if the host sets NODE_ENV=production for builds
+    buildCommand: npm ci --include=dev && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: 24.16.0
+      - key: VITE_API_URL # https://<api host>/api - read at BUILD time, so change it and redeploy the site
+        sync: false
+    # BrowserRouter: every path that is not a real file must return index.html, or a refresh on /plots gives a 404
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
