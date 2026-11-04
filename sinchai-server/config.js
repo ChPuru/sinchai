@@ -62,6 +62,9 @@ module.exports = {
   weather: {
     // only the test-suite switches this on: it must never call the real service, and feeds the database its own fixtures
     offline: isTest,
+    // Where the free Open-Meteo API is reached. Open-Meteo limits the free tier per IP address, so a shared host's address can
+    // already be over the limit (HTTP 429) through no fault of this app; OPEN_METEO_URL points the server at a relay with its own address.
+    baseUrl: process.env.OPEN_METEO_URL || 'https://api.open-meteo.com',
     ttlMs: 3 * 60 * 60 * 1000,
     timeoutMs: 8000,
   },

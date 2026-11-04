@@ -13,7 +13,7 @@ const unavailable = (what) => new HttpError(503, what, { code: 'WEATHER_UNAVAILA
 
 // ---- Open-Meteo ----------------------------------------------------------------------------------------------
 async function fetchOpenMeteo(loc, pastDays) {
-  const url = new URL('https://api.open-meteo.com/v1/forecast');
+  const url = new URL('/v1/forecast', config.weather.baseUrl);
   url.search = new URLSearchParams({
     latitude: String(loc.lat),
     longitude: String(loc.lon),
@@ -23,7 +23,11 @@ async function fetchOpenMeteo(loc, pastDays) {
     timezone: 'Asia/Kolkata',
   });
   const res = await fetch(url, { signal: AbortSignal.timeout(config.weather.timeoutMs) });
-  if (!res.ok) throw new Error('Open-Meteo answered ' + res.status);
+  if (!res.ok) {
+    // Open-Meteo says why in the body, e.g. {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+    const why = await res.json().then((body) => body?.reason, () => undefined);
+    throw new Error('Open-Meteo answered ' + res.status + (typeof why === 'string' ? ': ' + why.slice(0, 160) : ''));
+  }
   const d = (await res.json()).daily;
   if (!d || !Array.isArray(d.time)) throw new Error('Open-Meteo sent an unexpected reply');
 
