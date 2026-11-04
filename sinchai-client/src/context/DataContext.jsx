@@ -23,8 +23,10 @@ export function DataProvider({ children }) {
 
 function DataStore({ user, children }) {
   const [plots, setPlots] = useState([]);
-  const [weatherByVillage, setWeatherByVillage] = useState({}); // { karad: {...}, satara: {...} } - each plot uses its own village
-  const [primaryVillage, setPrimaryVillage] = useState(null);
+  // GET /api/weather -> villages is keyed by weather cell ("17.3,74.2", the pin rounded to 0.1 degree), not by village name;
+  // every plot carries its own cell as plot.weatherKey
+  const [weatherByVillage, setWeatherByVillage] = useState({});
+  const [primaryVillage, setPrimaryVillage] = useState(null); // the cell key of the account's own village
   const [weatherUnavailable, setWeatherUnavailable] = useState([]); // [{ key, village }] - live weather could not be fetched: no advice is shown, nothing is guessed
   const [history, setHistory] = useState([]);
   const [alerts, setAlerts] = useState([]); // supervisors only
@@ -72,10 +74,10 @@ function DataStore({ user, children }) {
     };
   }, [userId, role]);
 
-  // the weather of the user's own village, or the first village they have plots in
+  // the weather of the user's own village, or the first cell they have plots in
   const weather = weatherByVillage[primaryVillage] ?? Object.values(weatherByVillage)[0] ?? null;
-  // each plot is advised on the weather of ITS village, falling back to the main one
-  const weatherFor = useCallback((plot) => weatherByVillage[plot.villageKey] ?? weather, [weatherByVillage, weather]);
+  // each plot is advised on the weather of ITS cell (the server sends it as plot.weatherKey), falling back to the main one
+  const weatherFor = useCallback((plot) => weatherByVillage[plot.weatherKey] ?? weather, [weatherByVillage, weather]);
 
   const refreshWeather = useCallback(async () => {
     const w = await api.get("/weather");
